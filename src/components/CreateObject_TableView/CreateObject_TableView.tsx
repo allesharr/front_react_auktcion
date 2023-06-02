@@ -1,26 +1,23 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import { SubmitHandler } from 'react-hook-form';
+import {Grid} from '@mui/material'
+import { useMemo, useState, useEffect } from 'react'
+import { ColumnDef } from '@tanstack/react-table';
+import {Table}  from '../Datagrid/TableLaters';
+import axios from 'axios'
+
+// import { DataGrid } from '@mui/x-data-grid';
 
 
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        marginTop: theme.spacing(8),
+        marginTop: theme.spacing(0),
         display: 'flex',
-        //   flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
+        flexDirection: 'row',
+        
     },
     form: {
         marginTop: theme.spacing(1),
@@ -45,90 +42,128 @@ const CreateObject_TableView = () => {
     const handlePasswordDataChange = password => event  => {
         setValues({...values, [password]: event.target.value})
       }
+    const [loadingData, setLoadingData] = useState(true);
+    const [data, setData] = useState([])
+    //---------------------------------------------------------------
+            let link_to_fetch = `${process.env.REACT_APP_API_URL}/get_table_data`
+            useEffect(() => {
+                async function getData() {
+                    setData([])
+                  await axios
+                    .get(link_to_fetch)
+                    .then((response) => {
+                      // check if the data is populated
+                      console.log("Data is accepted")                      
+                    //   console.log(response.data);
+                      let items: any = []
+                      response.data.forEach(element => {
+                        console.log(element)
+                        items.push({
+                                            number: element.Number,
+                                            seller: element.Seller,
+                                            object: element.Object,
+                                            whogavemax: element.WhoGaveMax,
+                                            money: element.Money,
+                                            timetoout: element.TimeToOut,
+                        })
+                      });
+                    //   console.log("Second log")
+                    //   console.log(items);
+                      setData(items);
+                      // you tell it that you had the result
+                      setLoadingData(false);
+                    });
+                }
 
-    
+                if (loadingData) {
+                  // if the result is not ready so you make the axios call
+                  getData();
+                }
+              }, []);
 
     const submitFunction = async () => { 
 
     }
-    return (
-        // <div>
-        //     Aukt
-        // </div>
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5" style={{ textAlign: "center" }}>
-                    Аукцион
-                </Typography>
-                <form className={classes.form} noValidate onSubmit={submitFunction}>
 
-                    <TextField
+    const cols = useMemo<ColumnDef<any>[]>(
+        () => [
+          {
+            header: 'Номер',
+            cell: (row) => row.renderValue(),
+            accessorKey: 'number',
+          },
+          {
+            header: 'Опоздание с утра',
+            cell: (row) => row.renderValue(),
+            accessorKey: 'seller',
+          },
+          {
+            header: 'Ушел(ушла) раньше вечером',
+            cell: (row) => row.renderValue(),
+            accessorKey: 'object',
+          },
+          {
+           header: 'Опоздал(а) с обеда',
+           cell: (row) => row.renderValue(),
+           accessorKey: 'whogavemax',
+         },
+         {
+           header: 'Много курит',
+           cell: (row) => row.renderValue(),
+           accessorKey: 'money',
+         },
+        ],
+        [] 
+       );
+
+
+    return (   
+<Grid container my={4} spacing ={1}>
+    <Grid item xs={6}>
+        {/* <Box  bgcolor='primary.light'> item 1</Box> */}
+        <TextField
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
-                        label="Логин"
+                        label="Объект сделки"
                         type="text"
-                        onChange={handlePasswordDataChange('Number')}
-                        value={values.Number}
-                    />
-
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Пароль"
-                        type="password"
-                        onChange={handlePasswordDataChange('Seller')}
-                        value={values.Seller}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Пароль"
-                        type="password"
                         onChange={handlePasswordDataChange('Object')}
                         value={values.Object}
                     />
-                    <TextField
+    </Grid>
+    <Grid item xs = {6}>
+                 <TextField
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
-                        label="Пароль"
-                        type="password"
-                        onChange={handlePasswordDataChange('WhoGaveMax')}
-                        value={values.WhoGaveMax}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Пароль"
-                        type="password"
+                        label="Цена"
+                        type="text"
                         onChange={handlePasswordDataChange('Money')}
                         value={values.Money}
                     />
-
-                    <Button
+    </Grid>
+    <Grid item xs={12}>
+                <Button
                         type="submit"
                         fullWidth
                         variant="contained"
                         color="primary"
                         className={classes.submit}>
-                        Войти
+                        Выставить лот
                     </Button>
-                </form>
-            </div>
-        </Container>
+    </Grid>
+    <Grid item xs={12}>
+               {loadingData ? (
+                    <p>Loading Please wait...</p>
+                  ) : (
+                    <Table columns={cols} data={data} />
+                  )}
+    </Grid>
+    
+</Grid>
+
         )
 }
 
