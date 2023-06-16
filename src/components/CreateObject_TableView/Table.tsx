@@ -61,7 +61,7 @@ const Table_Data = () => {
 
   useEffect(() => {
     Grid_fill()
-    // setInterval(Grid_fill, 30000)
+    setInterval(Grid_fill, 30000)
 
   }, [])
 
@@ -74,7 +74,7 @@ const Table_Data = () => {
         rows={tableData}
         columns={cols}
         pageSizeOptions={[12, 25, 50, 100]}
-        getRowId={(row: GridRowProps) => row.object}
+        getRowId={(row: GridRowProps) => row.number}
       />
     </div>
   )
