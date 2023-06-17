@@ -12,7 +12,6 @@ import  myHookAdding  from './hooks'
 // import { DataGrid } from '@mui/x-data-grid';
 
 
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(0),
@@ -29,6 +28,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CreateObject_TableView = () => {
+
+
+  // const {isAdmin, setIsAdmin}  = React.useState(false)
+
+
+  
+
 
   const [values, setValues] = React.useState({
     Number: '',
@@ -80,7 +86,6 @@ const CreateObject_TableView = () => {
     let check_result = check_valid_digits(new_str)
 
     if (check_result) {
-      console.log("setting values " + new_str)
       setValues({ ...values, [time]: new_str })
     }
 
@@ -89,11 +94,11 @@ const CreateObject_TableView = () => {
     setMyAdd(e.target.value)
   }
   const PlusMyAdd = () => {
-    setMyAdd(myAdd + 100)
+    setMyAdd(myAdd + 50000)
   }
   const MenosMyAdd = () => {
-    if (myAdd > 100) {
-      setMyAdd(myAdd - 100)
+    if (myAdd > 50000) {
+      setMyAdd(myAdd - 50000)
     }
   }
 
@@ -113,11 +118,22 @@ const CreateObject_TableView = () => {
     } else {
       console.log('data is not full')
     }
+    
   }
 
+  function check_admin() {
+    let link_to_fetch = `${process.env.REACT_APP_API_URL}/check_admin/${localStorage.getItem("session_key")}`
+    axios.get(link_to_fetch).then(data => {
+      console.log(data)})
+    }
 
-  const [loadingData, setLoadingData] = useState(true);
-  const [data, setData] = useState([])
+  useEffect(() => {
+    check_admin()
+
+  }, [])
+
+  // const [loadingData, setLoadingData] = useState(true);
+  // const [data, setData] = useState([])
   //---------------------------------------------------------------
 
 
@@ -144,7 +160,7 @@ const CreateObject_TableView = () => {
           variant="contained"
           color="primary"
           className={classes.submit}>
-          +100
+          +50000
         </Button>
       </Grid>
       <Grid item xs={2}>
@@ -154,7 +170,7 @@ const CreateObject_TableView = () => {
           variant="contained"
           color="primary"
           className={classes.submit}>
-          -100
+          -50000
         </Button>
       </Grid>
 
@@ -206,7 +222,7 @@ const CreateObject_TableView = () => {
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <Table_Data />
+        <Table_Data sum={myAdd}/>
       </Grid>
 
     </Grid>

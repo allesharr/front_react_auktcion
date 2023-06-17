@@ -10,8 +10,8 @@ import myHookAdding from './hooks'
 
 
 
-const Table_Data = () => {
-  const {setMyAdd, myAdd}  = myHookAdding();
+const Table_Data = ({sum}) => {
+  // const {setMyAdd, myAdd}  = myHookAdding();
 
   // let 
 
@@ -22,7 +22,7 @@ const Table_Data = () => {
     { field: 'seller', headerName: 'Продавец', width: 200 },
     { field: 'object', headerName: 'Объект продажи', width: 300 },
     { field: 'whogavemax', headerName: 'Последняя ставка', width: 200 },
-    { field: 'money', headerName: 'Сумма', width: 100 },
+    { field: 'money', headerName: 'Сумма', width: 200 },
     {
       field: "action",
       headerName: "Сделать ставку",
@@ -32,7 +32,7 @@ const Table_Data = () => {
           let data = {
             number: params.row.number,
             whogavemax: localStorage.getItem('login'),
-            money: parseInt(params.row.money) + myAdd,
+            money: parseInt(params.row.money) + sum,
           }
           console.log(data)
           let link_to_fetch = `${process.env.REACT_APP_API_URL}/update`
