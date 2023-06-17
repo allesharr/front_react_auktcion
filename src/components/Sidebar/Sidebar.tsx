@@ -106,12 +106,15 @@ const useStyles = makeStyles((theme: Theme) =>
   ))
 
 
-export default function MiniDrawer() {
+export default function MiniDrawer( {is_admin} ) {
+
 
   const { roles, sideBarOpen } = useTypedSelector(state => state.application)
   const classes = useStyles();
 
   const isActive = ({isActive}) => { return isActive ? clsx(classes.link,classes.activeLink) : classes.link }
+
+
 
   return (
     <div className={classes.root}>
@@ -153,7 +156,7 @@ export default function MiniDrawer() {
           &&
           <>
               {/* <Divider /> */}
-              
+             
               <NavLink to="/users" className={isActive}>
                 <ListItem style={{whiteSpace: "normal"}}>
                 <Tooltip title={sideBarOpen ? "" : "Пользователи" } placement="bottom-end">
@@ -162,6 +165,7 @@ export default function MiniDrawer() {
                   <ListItemText>Пользователи</ListItemText>
                 </ListItem>
               </NavLink>
+              
           </>
         }
 

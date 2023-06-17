@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 const CreateObject_TableView = () => {
 
 
-  // const {isAdmin, setIsAdmin}  = React.useState(false)
+  const [isAdmin, setIsAdmin]  =  useState(false)
 
 
   
@@ -122,9 +122,14 @@ const CreateObject_TableView = () => {
   }
 
   function check_admin() {
-    let link_to_fetch = `${process.env.REACT_APP_API_URL}/check_admin/${localStorage.getItem("session_key")}`
-    axios.get(link_to_fetch).then(data => {
-      console.log(data)})
+    let link_to_fetch = `${process.env.REACT_APP_API_URL}/check_admin_status/${localStorage.getItem("session_key")}`
+    axios({
+      method: "get",
+      url: link_to_fetch,
+    }).then(function (response) {
+      setIsAdmin(response.data.is_admin)
+    });
+    
     }
 
   useEffect(() => {
@@ -174,6 +179,9 @@ const CreateObject_TableView = () => {
         </Button>
       </Grid>
 
+
+      {isAdmin ? (
+    <Grid container my={4} spacing={1}> 
       <Grid item xs={4}>
         {/* <Box  bgcolor='primary.light'> item 1</Box> */}
         <TextField
@@ -221,6 +229,11 @@ const CreateObject_TableView = () => {
           Выставить лот
         </Button>
       </Grid>
+    </Grid>   )
+       :(<div>
+
+       </div>)}
+      
       <Grid item xs={12}>
         <Table_Data sum={myAdd}/>
       </Grid>

@@ -34,7 +34,7 @@ const Table_Data = ({sum}) => {
             whogavemax: localStorage.getItem('login'),
             money: parseInt(params.row.money) + sum,
           }
-          console.log(data)
+          // console.log(data)
           let link_to_fetch = `${process.env.REACT_APP_API_URL}/update`
           axios.post(link_to_fetch, data)
           
@@ -52,7 +52,7 @@ const Table_Data = ({sum}) => {
     fetch(link_to_fetch)
       .then((data) => data.json())
       .then((data) => {
-        console.log(data)
+        // console.log(data)
         setTableData(data)
       })
   }
