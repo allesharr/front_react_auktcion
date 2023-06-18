@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,6 +17,7 @@ import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { Roles } from '../../types/application';
 import DescriptionIcon from '@material-ui/icons/Description';
 import  Late  from  '../../resources/Late.png'
+import axios from 'axios'
 
 import  shopping_icon from '../../resources/shopping_icon.svg'
 const drawerWidth = 250;
@@ -106,7 +107,7 @@ const useStyles = makeStyles((theme: Theme) =>
   ))
 
 
-export default function MiniDrawer( {is_admin} ) {
+export default function MiniDrawer( ) {
 
 
   const { roles, sideBarOpen } = useTypedSelector(state => state.application)
@@ -114,7 +115,23 @@ export default function MiniDrawer( {is_admin} ) {
 
   const isActive = ({isActive}) => { return isActive ? clsx(classes.link,classes.activeLink) : classes.link }
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  //no es mejor, pero ha hacemos con muy velocidad. es una requesta nombre dos
+  function check_admin() {
+    let link_to_fetch = `${process.env.REACT_APP_API_URL}/check_admin_status/${localStorage.getItem("session_key")}`
+    axios({
+      method: "get",
+      url: link_to_fetch,
+    }).then(function (response) {
+      setIsAdmin(response.data.is_admin)
+    });
+    
+    }
 
+  useEffect(() => {
+    check_admin()
+
+  }, [])
 
   return (
     <div className={classes.root}>
@@ -151,23 +168,30 @@ export default function MiniDrawer( {is_admin} ) {
             </ListItem>
           </NavLink>
            
-        {
-          (roles && roles.includes(Roles.Admin))
-          &&
-          <>
-              {/* <Divider /> */}
+        {/* { */}
+          {/* // (roles && roles.includes(Roles.Admin)) */}
+          {/* // && */}
+          {/* // <> */}
+          <Divider />
+
+          {isAdmin ? 
+            ( <NavLink to="/users" className={isActive}>
+          <ListItem style={{whiteSpace: "normal"}}>
+          <Tooltip title={sideBarOpen ? "" : "Пользователи" } placement="bottom-end">
+            <ListItemIcon><Icon className={classes.sidebarIcon} path={mdiAccountPlusOutline} size={1}/></ListItemIcon>
+            </Tooltip>
+            <ListItemText>Пользователи</ListItemText>
+          </ListItem>
+        </NavLink>) : (
+          <div>
+
+          </div>
+        ) }
              
-              <NavLink to="/users" className={isActive}>
-                <ListItem style={{whiteSpace: "normal"}}>
-                <Tooltip title={sideBarOpen ? "" : "Пользователи" } placement="bottom-end">
-                  <ListItemIcon><Icon className={classes.sidebarIcon} path={mdiAccountPlusOutline} size={1}/></ListItemIcon>
-                  </Tooltip>
-                  <ListItemText>Пользователи</ListItemText>
-                </ListItem>
-              </NavLink>
+             
               
-          </>
-        }
+          {/* // </> */}
+        {/* // } */}
 
         </List>    
       </Drawer>
